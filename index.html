@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pyeon · QA Engineer</title>
+<meta name="description" content="테스트 자동화와 품질 설계를 하는 QA 엔지니어 Pyeon의 포트폴리오">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F7F8;
+    --sheet: #FFFFFF;
+    --ink: #17212B;
+    --ink-soft: #5A6672;
+    --rule: #DCE2E6;
+    --pass: #1F8A5B;
+    --pass-bg: #E3F3EA;
+    --pending: #B7791F;
+    --pending-bg: #FBF0DC;
+    --skip: #6B7A89;
+    --skip-bg: #ECEFF2;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "IBM Plex Sans KR", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #12181E;
+      --sheet: #1A222A;
+      --ink: #E6ECF0;
+      --ink-soft: #9AA7B3;
+      --rule: #2A3540;
+      --pass: #4CC38A;
+      --pass-bg: #173326;
+      --pending: #E0A84A;
+      --pending-bg: #3A2C14;
+      --skip: #9AA7B3;
+      --skip-bg: #232D37;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--pass);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  /* 상단 내비 */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 0;
+    font-size: 15px;
+  }
+  nav .who { font-weight: 700; }
+  nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; }
+  nav ul a { text-decoration: none; color: var(--ink-soft); }
+  nav ul a:hover { color: var(--ink); }
+
+  /* 히어로: 테스트 실행 결과 */
+  .hero { padding: 48px 0 72px; }
+  .hero h1 {
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .hero .lead {
+    color: var(--ink-soft);
+    max-width: 38em;
+    margin: 0 0 40px;
+  }
+
+  .run {
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--pass);
+    padding: 22px 24px;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.9;
+    overflow-x: auto;
+  }
+  .run .cmd { color: var(--ink-soft); }
+  .run .line { display: flex; justify-content: space-between; gap: 24px; white-space: nowrap; }
+  .run .ok { color: var(--pass); font-weight: 500; }
+  .run .summary {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule);
+    color: var(--pass);
+    font-weight: 500;
+  }
+  /* 한 번만 실행되는 로딩 연출 */
+  .run .line, .run .summary { opacity: 0; animation: appear .01s forwards; }
+  .run .line:nth-of-type(1) { animation-delay: .35s; }
+  .run .line:nth-of-type(2) { animation-delay: .65s; }
+  .run .line:nth-of-type(3) { animation-delay: .95s; }
+  .run .line:nth-of-type(4) { animation-delay: 1.25s; }
+  .run .line:nth-of-type(5) { animation-delay: 1.55s; }
+  .run .summary { animation-delay: 1.95s; }
+  @keyframes appear { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .run .line, .run .summary { opacity: 1; animation: none; }
+  }
+
+  /* 섹션 공통 */
+  section { padding: 64px 0; border-top: 1px solid var(--rule); }
+  section h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  section .sub { color: var(--ink-soft); margin: 0 0 32px; }
+
+  /* 프로젝트: 테스트 케이스 목록 */
+  .cases { list-style: none; margin: 0; padding: 0; }
+  .case {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 24px;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .case:first-child { padding-top: 0; }
+  .case h3 { margin: 0; font-size: 20px; font-weight: 700; }
+  .case p { margin: 0; color: var(--ink-soft); grid-column: 1 / -1; max-width: 40em; }
+  .case .stack {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .case .links { grid-column: 1 / -1; margin-top: 6px; font-size: 15px; display: flex; gap: 18px; flex-wrap: wrap; }
+  .status {
+    align-self: start;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .status.pass { color: var(--pass); background: var(--pass-bg); }
+  .status.running { color: var(--pending); background: var(--pending-bg); }
+  .status.queued { color: var(--skip); background: var(--skip-bg); }
+
+  /* 경력: 타임라인 */
+  .timeline { list-style: none; margin: 0; padding: 0 0 0 22px; border-left: 2px solid var(--rule); }
+  .timeline li { position: relative; padding: 0 0 32px; }
+  .timeline li:last-child { padding-bottom: 0; }
+  .timeline li::before {
+    content: "";
+    position: absolute;
+    left: -29px; top: 9px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--ink-soft);
+  }
+  .timeline li.now::before { background: var(--pass); border-color: var(--pass); }
+  .timeline .when { font-size: 14px; color: var(--ink-soft); }
+  .timeline h3 { margin: 2px 0 4px; font-size: 18px; }
+  .timeline p { margin: 0; color: var(--ink-soft); max-width: 40em; }
+
+  /* 자격·스킬 */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .grid2 h3 { font-size: 16px; margin: 0 0 12px; }
+  .grid2 ul { margin: 0; padding-left: 18px; color: var(--ink-soft); }
+  .grid2 li { margin-bottom: 6px; }
+  .grid2 li strong { color: var(--ink); font-weight: 500; }
+
+  /* 연락처 */
+  .contact a.btn {
+    display: inline-block;
+    margin: 8px 12px 0 0;
+    padding: 10px 18px;
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  .contact a.btn.primary { background: var(--ink); color: var(--paper); }
+  .contact a.btn:hover { border-color: var(--pass); }
+
+  footer { padding: 40px 0 56px; color: var(--ink-soft); font-size: 14px; }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 16px; }
+    nav ul { gap: 14px; }
+    .hero { padding: 24px 0 48px; }
+    .run { padding: 16px; font-size: 12.5px; }
+    section { padding: 48px 0; }
+    .grid2 { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav aria-label="주요 메뉴">
+    <span class="who">Pyeon</span>
+    <ul>
+      <li><a href="#projects">프로젝트</a></li>
+      <li><a href="#career">경력</a></li>
+      <li><a href="#contact">연락처</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <h1>깨지기 전에 먼저 찾아내는 QA 엔지니어, Pyeon입니다.</h1>
+    <p class="lead">가상자산 거래소 앱의 UI 회귀 테스트와 Python 기반 테스트 자동화를 맡고 있습니다. 반복되는 검증은 코드로 옮기고, 남는 시간은 더 어려운 결함을 찾는 데 씁니다.</p>
+
+    <div class="run" role="img" aria-label="포트폴리오 테스트 실행 결과: 5개 항목 모두 통과">
+      <div class="cmd">$ pytest pyeon/ -v</div>
+      <div class="line"><span>test_role.py::test_qa_engineer</span><span class="ok">PASSED</span></div>
+      <div class="line"><span>test_automation.py::test_pytest_selenium</span><span class="ok">PASSED</span></div>
+      <div class="line"><span>test_platform.py::test_ios_regression</span><span class="ok">PASSED</span></div>
+      <div class="line"><span>test_cert.py::test_istqb</span><span class="ok">PASSED</span></div>
+      <div class="line"><span>test_cert.py::test_csts</span><span class="ok">PASSED</span></div>
+      <div class="summary">==== 5 passed in 1y 7m ====</div>
+    </div>
+  </header>
+
+  <section id="projects">
+    <h2>프로젝트</h2>
+    <p class="sub">직접 기획하고 테스트까지 설계한 개인 프로젝트입니다.</p>
+
+    <ul class="cases">
+      <li class="case">
+        <h3>Checkine</h3>
+        <span class="status pass">PASSED</span>
+        <p>B2B SaaS 출결 관리 서비스. 백엔드·프론트엔드를 직접 구현하고, pytest 49개 테스트 케이스와 GitLab CI/CD 파이프라인으로 배포 전 품질을 검증합니다. JWT 리프레시 토큰 로테이션으로 인증 보안을 강화했습니다.</p>
+        <div class="stack">FastAPI · Vue 3 · pytest · GitLab CI/CD · JWT</div>
+        <div class="links">
+          <a href="https://eight-kookaburra-cef.notion.site/39752ea9b694808f9b44ca2a6a9a44bf" target="_blank" rel="noopener">포트폴리오 문서 보기</a>
+          <a href="https://gitlab.com/sky992908/test-develop-project" target="_blank" rel="noopener">GitLab 저장소</a>
+        </div>
+      </li>
+
+      <li class="case">
+        <h3>LLM 테스트 케이스 생성기</h3>
+        <span class="status running">RUNNING</span>
+        <p>OpenAPI 명세와 요구사항을 입력하면 경계값 분석, 동등 분할, null·빈 값, 타입 불일치 같은 ISTQB 기법으로 테스트 케이스를 생성합니다. 결과는 기존 CSV 기반 pytest 프레임워크에서 바로 실행할 수 있는 형식으로 출력됩니다.</p>
+        <div class="stack">Python · LLM API · OpenAPI · pytest · CSV</div>
+      </li>
+
+      <li class="case">
+        <h3>Flaky Test Predictor</h3>
+        <span class="status queued">QUEUED</span>
+        <p>실행 시간, 환경, 재시도 이력 같은 테스트 실행 데이터를 학습해 불안정한 테스트를 예측합니다. CI에 연동해 실패하기 전에 미리 경고하는 것이 목표입니다.</p>
+        <div class="stack">Python · scikit-learn · CI 연동</div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="career">
+    <h2>경력과 학력</h2>
+    <p class="sub">최근 순서입니다.</p>
+
+    <ol class="timeline">
+      <li class="now">
+        <div class="when">재직 중 · 1년 7개월</div>
+        <h3>(주)테스트이앤씨 · QA 테스터</h3>
+        <p>파트너사 가상자산 거래소 앱(iOS 등 멀티 플랫폼)의 UI 회귀 테스트를 담당하고, Pytest·Selenium으로 테스트 자동화를 구축했습니다.</p>
+      </li>
+      <li>
+        <div class="when">졸업</div>
+        <h3>아주대학교 · 컴퓨터공학</h3>
+        <p>소프트웨어 공학과 테스트 이론의 기초를 다졌습니다.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="skills">
+    <h2>자격증과 기술</h2>
+    <p class="sub">테스트 이론과 자동화 도구를 함께 다룹니다.</p>
+    <div class="grid2">
+      <div>
+        <h3>자격증</h3>
+        <ul>
+          <li><strong>ISTQB</strong> 국제 소프트웨어 테스팅 자격</li>
+          <li><strong>CSTS</strong> 소프트웨어 테스트 전문가</li>
+        </ul>
+      </div>
+      <div>
+        <h3>기술</h3>
+        <ul>
+          <li><strong>테스트 자동화</strong> Python, Pytest, Selenium</li>
+          <li><strong>개발</strong> FastAPI, Vue 3</li>
+          <li><strong>CI/CD</strong> GitLab CI</li>
+          <li><strong>테스트 설계</strong> 경계값 분석, 동등 분할, 회귀 테스트</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>연락처</h2>
+    <p class="sub">채용 관련 문의는 메일로 편하게 주세요.</p>
+    <!-- 아래 메일 주소와 이력서 경로를 본인 것으로 바꾸세요 -->
+    <a class="btn primary" href="mailto:your.email@example.com">메일 보내기</a>
+    <a class="btn" href="resume.pdf" target="_blank" rel="noopener">이력서 PDF 받기</a>
+    <!-- YOUR_GITHUB_ID를 본인 GitHub 아이디로 바꾸세요 -->
+    <a class="btn" href="https://github.com/YOUR_GITHUB_ID" target="_blank" rel="noopener">GitHub</a>
+  </section>
+
+  <footer>© 2026 Pyeon</footer>
+
+</div>
+</body>
+</html>
